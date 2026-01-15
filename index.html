@@ -86,44 +86,54 @@
       #00d2d3 216deg 288deg,
       #576574 288deg 360deg
     );
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* Premios centrados en cada segmento */
   .wheel span {
     position: absolute;
-    width: 50%;
     left: 50%;
     top: 50%;
     transform-origin: 0% 0%;
-    text-align: right;
+    text-align: center;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 11px;
     pointer-events: none;
+    line-height: 1.3;
+    width: 70px;
   }
 
-  .wheel span:nth-child(1) { transform: rotate(36deg) translateX(-50%) rotate(-36deg); }
-  .wheel span:nth-child(2) { transform: rotate(108deg) translateX(-50%) rotate(-108deg); }
-  .wheel span:nth-child(3) { transform: rotate(180deg) translateX(-50%) rotate(-180deg); }
-  .wheel span:nth-child(4) { transform: rotate(252deg) translateX(-50%) rotate(-252deg); }
-  .wheel span:nth-child(5) { transform: rotate(324deg) translateX(-50%) rotate(-324deg); }
+  /* Cada texto rotado según su segmento (72° cada uno) */
+  .wheel span:nth-child(1) { 
+    transform: rotate(36deg) translateX(80px) rotate(-90deg);
+  }
+  .wheel span:nth-child(2) { 
+    transform: rotate(108deg) translateX(80px) rotate(-90deg);
+  }
+  .wheel span:nth-child(3) { 
+    transform: rotate(180deg) translateX(80px) rotate(-90deg);
+  }
+  .wheel span:nth-child(4) { 
+    transform: rotate(252deg) translateX(80px) rotate(-90deg);
+  }
+  .wheel span:nth-child(5) { 
+    transform: rotate(324deg) translateX(80px) rotate(-90deg);
+  }
 
   .needle {
     position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 6px;
-    height: 70px;
-    background: #ff3f3f;
-    border-radius: 3px;
+    top: 50%;
+    left: -25px;
+    transform: translateY(-50%) rotate(-90deg);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 50px solid #ff3f3f;
     z-index: 10;
-    box-shadow: 0 0 10px #ff3f3f, 0 0 20px #ff3f3f;
-    animation: pulse 1s infinite alternate;
-  }
-
-  @keyframes pulse {
-    0% { transform: translateX(-50%) scaleY(1); }
-    100% { transform: translateX(-50%) scaleY(1.15); }
+    filter: drop-shadow(0 0 10px rgba(255, 63, 63, 0.8));
   }
 
   .result {
@@ -165,18 +175,21 @@
 </div>
 
 <script>
-  const codigosValidos = ["ZS-DEMO-01"];
+  const codigosValidos = ["ZS-DEMO-01", "ZS-PROMO-22", "ZS-FIT-33", "ZS-HEALTH-44", "ZS-POWER-55"];
   const premios = [
-    "💚 10% OFF próxima compra",
+    "💚 10% OFF",
     "🥤 Batido gratis",
-    "🍽️ Upgrade de proteína",
-    "🎟️ 2x1 en batidos",
+    "🍽️ Upgrade proteína",
+    "🎟️ 2x1",
     "❌ Sigue cuidándote"
   ];
 
   function normalizarCodigo(valor) {
-    return valor.toUpperCase().replace(/[^A-Z0-9]/g,"");
+    return valor.toUpperCase().trim();
   }
+
+  // Almacenamiento en memoria (reemplaza localStorage)
+  const codigosUsados = {};
 
   function girar() {
     const input = document.getElementById("codigo").value;
@@ -194,7 +207,7 @@
       return;
     }
 
-    if (localStorage.getItem(codigo)) {
+    if (codigosUsados[codigo]) {
       resultado.innerText = "🚫 Este código ya fue usado";
       return;
     }
@@ -205,10 +218,14 @@
     wheel.style.transform = `rotate(${grados}deg)`;
 
     const premio = premios[Math.floor(Math.random() * premios.length)];
-    localStorage.setItem(codigo, premio);
+    codigosUsados[codigo] = premio;
 
     setTimeout(() => {
-      resultado.innerText = `🎉 Ganaste: ${premio}`;
+      if (premio === "❌ Sigue cuidándote") {
+        resultado.innerText = `💚 ¡Sigue intentándolo! No te rindas`;
+      } else {
+        resultado.innerText = `🎉 ¡Ganaste: ${premio}!`;
+      }
     }, 4200);
   }
 </script>
