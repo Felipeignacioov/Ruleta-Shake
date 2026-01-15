@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ruleta Zero Shake</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e6f7f4;
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #0aa39a;
+    }
+
+    input {
+      padding: 10px;
+      width: 220px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      font-size: 16px;
+      background: #0aa39a;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .resultado {
+      margin-top: 25px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎰 Ruleta Zero Shake</h1>
+  <p>Ingresa tu código y gira la ruleta</p>
+
+  <input type="text" id="codigo" placeholder="Código único">
+  <br>
+  <button onclick="girarRuleta()">Girar ruleta</button>
+
+  <div class="resultado" id="resultado"></div>
+
+  <script>
+    // Códigos válidos (simulación)
+    const codigosValidos = [
+      "ZS-1234",
+      "ZS-5678",
+      "ZS-9012",
+      "ZS-7777"
+    ];
+
+    // Premios posibles
+    const premios = [
+      "🥤 Batido gratis",
+      "💚 10% OFF próxima compra",
+      "🍽️ Upgrade de proteína",
+      "🎟️ 2x1 en batidos",
+      "❌ Sigue cuidándote"
+    ];
+
+    function girarRuleta() {
+      const codigo = document.getElementById("codigo").value.trim();
+      const resultado = document.getElementById("resultado");
+
+      if (!codigo) {
+        resultado.innerText = "⚠️ Ingresa un código válido";
+        return;
+      }
+
+      // Verificar si el código existe
+      if (!codigosValidos.includes(codigo)) {
+        resultado.innerText = "❌ Código inválido";
+        return;
+      }
+
+      // Verificar si ya fue usado
+      if (localStorage.getItem(codigo)) {
+        resultado.innerText = "🚫 Este código ya fue usado";
+        return;
+      }
+
+      // Girar ruleta (premio aleatorio)
+      const premio = premios[Math.floor(Math.random() * premios.length)];
+
+      // Guardar código como usado
+      localStorage.setItem(codigo, premio);
+
+      // Mostrar resultado
+      resultado.innerText = `🎉 Resultado: ${premio}`;
+    }
+  </script>
+
+</body>
+</html>
