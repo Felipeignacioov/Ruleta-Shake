@@ -1,110 +1,164 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Ruleta Zero Shake</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #e6f7f4;
-      text-align: center;
-      padding: 40px;
-    }
+<meta charset="UTF-8">
+<title>Ruleta Zero Shake</title>
 
-    h1 {
-      color: #0aa39a;
-    }
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', system-ui, sans-serif;
+    background: radial-gradient(circle at top, #0fb9b1, #062f2d);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
 
-    input {
-      padding: 10px;
-      width: 220px;
-      margin-top: 10px;
-      font-size: 16px;
-    }
+  .card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(14px);
+    border-radius: 20px;
+    padding: 30px;
+    width: 320px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    text-align: center;
+  }
 
-    button {
-      padding: 10px 20px;
-      margin-top: 15px;
-      font-size: 16px;
-      background: #0aa39a;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 6px;
-    }
+  h1 {
+    margin: 0 0 10px;
+    font-size: 22px;
+  }
 
-    button:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
+  p {
+    font-size: 14px;
+    opacity: 0.9;
+  }
 
-    .resultado {
-      margin-top: 25px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-  </style>
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin-top: 15px;
+    font-size: 15px;
+    outline: none;
+  }
+
+  button {
+    margin-top: 18px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #1dd1a1, #10ac84);
+    color: #063f3b;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,.3);
+  }
+
+  .wheel {
+    margin: 25px auto;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 8px solid rgba(255,255,255,.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    background: conic-gradient(
+      #1dd1a1 0deg 72deg,
+      #10ac84 72deg 144deg,
+      #48dbfb 144deg 216deg,
+      #00d2d3 216deg 288deg,
+      #576574 288deg 360deg
+    );
+    transition: transform 2.5s cubic-bezier(.17,.67,.26,1);
+  }
+
+  .result {
+    margin-top: 15px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .small {
+    margin-top: 10px;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+</style>
 </head>
+
 <body>
 
+<div class="card">
   <h1>🎰 Ruleta Zero Shake</h1>
   <p>Ingresa tu código y gira la ruleta</p>
 
-  <input type="text" id="codigo" placeholder="Código único">
-  <br>
-  <button onclick="girarRuleta()">Girar ruleta</button>
+  <input id="codigo" placeholder="Ej: ZS-DEMO-01">
+  <button onclick="girar()">Girar ruleta</button>
 
-  <div class="resultado" id="resultado"></div>
+  <div class="wheel" id="wheel">ZERO</div>
+  <div class="result" id="resultado"></div>
 
-  <script>
-    // Códigos válidos (simulación)
-    const codigosValidos = [
-      "ZS-1234",
-      "ZS-5678",
-      "ZS-9012",
-      "ZS-7777"
-    ];
+  <div class="small">1 código = 1 giro</div>
+</div>
 
-    // Premios posibles
-    const premios = [
-      "🥤 Batido gratis",
-      "💚 10% OFF próxima compra",
-      "🍽️ Upgrade de proteína",
-      "🎟️ 2x1 en batidos",
-      "❌ Sigue cuidándote"
-    ];
+<script>
+  // Códigos válidos (demo)
+  const codigosValidos = ["ZS-DEMO-01"];
 
-    function girarRuleta() {
-      const codigo = document.getElementById("codigo").value.trim();
-      const resultado = document.getElementById("resultado");
+  const premios = [
+    "🥤 Batido gratis",
+    "💚 10% OFF",
+    "🍽️ Upgrade proteína",
+    "🎟️ 2x1 en batidos",
+    "❌ Sigue cuidándote"
+  ];
 
-      if (!codigo) {
-        resultado.innerText = "⚠️ Ingresa un código válido";
-        return;
-      }
+  function girar() {
+    const codigo = document.getElementById("codigo").value.trim();
+    const wheel = document.getElementById("wheel");
+    const resultado = document.getElementById("resultado");
 
-      // Verificar si el código existe
-      if (!codigosValidos.includes(codigo)) {
-        resultado.innerText = "❌ Código inválido";
-        return;
-      }
-
-      // Verificar si ya fue usado
-      if (localStorage.getItem(codigo)) {
-        resultado.innerText = "🚫 Este código ya fue usado";
-        return;
-      }
-
-      // Girar ruleta (premio aleatorio)
-      const premio = premios[Math.floor(Math.random() * premios.length)];
-
-      // Guardar código como usado
-      localStorage.setItem(codigo, premio);
-
-      // Mostrar resultado
-      resultado.innerText = `🎉 Resultado: ${premio}`;
+    if (!codigo) {
+      resultado.innerText = "⚠️ Ingresa un código";
+      return;
     }
-  </script>
+
+    if (!codigosValidos.includes(codigo)) {
+      resultado.innerText = "❌ Código inválido";
+      return;
+    }
+
+    if (localStorage.getItem(codigo)) {
+      resultado.innerText = "🚫 Este código ya fue usado";
+      return;
+    }
+
+    const vueltas = 5 + Math.floor(Math.random() * 3);
+    const grados = vueltas * 360 + Math.floor(Math.random() * 360);
+    wheel.style.transform = `rotate(${grados}deg)`;
+
+    const premio = premios[Math.floor(Math.random() * premios.length)];
+    localStorage.setItem(codigo, premio);
+
+    setTimeout(() => {
+      resultado.innerText = `🎉 Ganaste: ${premio}`;
+    }, 2600);
+  }
+</script>
 
 </body>
 </html>
