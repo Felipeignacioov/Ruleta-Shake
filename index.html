@@ -1,0 +1,80 @@
+<script>
+  const premios = [
+    "10% OFF",
+    "BATIDO GRATIS",
+    "UPGRADE PROTEÍNA",
+    "2X1",
+    "SIGUE CUIDÁNDOTE"
+  ];
+
+  const centrosSegmentos = [36, 108, 180, 252, 324];
+
+  function normalizarCodigo(valor) {
+    return valor.toUpperCase().trim();
+  }
+
+  async function girar() {
+    const input = document.getElementById("codigo");
+    const codigo = normalizarCodigo(input.value);
+    const wheel = document.getElementById("wheel");
+    const resultado = document.getElementById("resultado");
+
+    if (!codigo) {
+      resultado.innerText = "⚠️ Ingresa un código";
+      return;
+    }
+
+    // UI: estado verificando
+    resultado.innerHTML = `<span class="loading">⏳ Verificando código...</span>`;
+
+    try {
+      const response = await fetch(
+        "https://flpzz.app.n8n.cloud/webhook-test/ruleta-validar",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            codigo: codigo
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      // ❌ Código inválido
+      if (!data.ok) {
+        resultado.innerText = "❌ Código inválido o ya expirado";
+        return;
+      }
+
+      // ✅ Código válido
+      const premio = data.premio;
+      const indicePremio = premios.indexOf(premio);
+
+      if (indicePremio === -1) {
+        resultado.innerText = "⚠️ Premio no válido";
+        return;
+      }
+
+      const anguloDelPremio = centrosSegmentos[indicePremio];
+      const rotacionNecesaria = 180 - anguloDelPremio;
+      const vueltas = 5 + Math.floor(Math.random() * 3);
+      const anguloFinal = vueltas * 360 + rotacionNecesaria;
+
+      wheel.style.transform = `rotate(${anguloFinal}deg)`;
+
+      setTimeout(() => {
+        if (premio === "SIGUE CUIDÁNDOTE") {
+          resultado.innerText = "💚 ¡Sigue intentándolo!";
+        } else {
+          resultado.innerText = `🎉 ¡Ganaste: ${premio}!`;
+        }
+      }, 4200);
+
+    } catch (error) {
+      resultado.innerText = "⚠️ Error de conexión, intenta nuevamente";
+    }
+  }
+</script>
