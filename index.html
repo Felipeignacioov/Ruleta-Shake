@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ruleta Zero Shake</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Partículas flotantes de fondo */
+  .floating-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .particle {
+    position: absolute;
+    background: radial-gradient(circle, rgba(0, 217, 206, 0.15), transparent);
+    border-radius: 50%;
+    animation: float linear infinite;
+  }
+  
+  @keyframes float {
+    0% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-100px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  .card {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 35px;
+    width: 98%;
+    max-width: 600px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: -80px;
+    transform: scale(1.15);
+    z-index: 1;
+    animation: cardEntrance 0.8s ease-out;
+  }
+  
+  @keyframes cardEntrance {
+    0% {
+      opacity: 0;
+      transform: scale(1.15) translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1.15) translateY(0);
+    }
+  }
+
+  h1 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    background: linear-gradient(135deg, #00d9ce, #00a89e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  p {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    margin-top: 20px;
+    font-size: 14px;
+    outline: none;
+    color: #fff;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  input::placeholder {
+    color: rgba(255,255,255,0.4);
+  }
+
+  button {
+    margin-top: 18px;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    background: #ffffff;
+    color: #0a0a0a;
+    cursor: pointer;
+    transition: all .2s ease;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255,255,255,.2);
+  }
+  
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .wheel-container {
+    position: relative;
+    margin: 25px auto;
+    width: 408px;
+    height: 408px;
+  }
+
+  .wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 8px solid #00d9ce;
+    box-shadow: 
+      0 0 30px rgba(0,217,206,0.6),
+      0 0 60px rgba(0,217,206,0.4),
+      0 0 90px rgba(0,217,206,0.3),
+      0 8px 32px rgba(0,217,206,0.3),
+      inset 0 0 40px rgba(0,0,0,0.1);
+    position: relative;
+    transition: transform 4s cubic-bezier(.17,.67,.26,1);
+    background: conic-gradient(
+      from 0deg,
+      #0a0a0a 0deg 72deg,
+      #1a1a1a 72deg 144deg,
+      #2d2d2d 144deg 216deg,
+      #1f1f1f 216deg 288deg,
+      #252525 288deg 360deg
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .wheel::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: 
+      conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 72deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 144deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 216deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 288deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg);
+    pointer-events: none;
+  }
+  
+  .wheel::after {
+    content: '';
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(240,248,255,0.95) 100%);
+    border-radius: 50%;
+    border: 3px solid #00d9ce;
+    box-shadow: 
+      0 0 20px rgba(0,217,206,0.5),
+      inset 0 0 20px rgba(0,217,206,0.1);
+    z-index: 5;
+  }
+  
+  .mascot-logo {
+    position: absolute;
+    width: 75px;
+    height: 75px;
+    z-index: 6;
+    filter: drop-shadow(0 2px 12px rgba(0,217,206,0.3));
+    animation: mascotBreath 3s ease-in-out infinite;
+  }
+  
+  @keyframes mascotBreath {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  /* Premios centrados en cada segmento */
+  .wheel span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: 0% 0%;
+    text-align: center;
+    font-weight: 700;
+    font-size: 12.65px;
+    pointer-events: none;
+    line-height: 1.3;
+    width: 85px;
+    margin-top: -8px;
+    margin-left: -5px;
+    color: #ffffff;
+    text-shadow: 
+      0 2px 8px rgba(0,0,0,0.5);
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    opacity: 0.95;
+  }
+  
+  .wheel span::before {
+    content: attr(data-icon);
+    display: block;
+    font-size: 19.36px;
+    margin-bottom: 2px;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+  }
+
+  /* Cada texto rotado según su segmento (72° cada uno) */
+  .wheel span:nth-child(2) { 
+    transform: rotate(40deg) translateX(70px) rotate(-90deg);
+  }
+  .wheel span:nth-child(3) { 
+    transform: rotate(106deg) translateX(56px) rotate(-90deg);
+  }
+  .wheel span:nth-child(4) { 
+    transform: rotate(182deg) translateX(52px) rotate(-90deg);
+  }
+  .wheel span:nth-child(5) { 
+    transform: rotate(254deg) translateX(50px) rotate(-90deg);
+  }
+  .wheel span:nth-child(6) { 
+    transform: rotate(333deg) translateX(50px) rotate(-90deg);
+  }
+
+  .needle {
+    position: absolute;
+    top: 50%;
+    left: -25px;
+    transform: translateY(-50%) rotate(-90deg);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 50px solid #00d9ce;
+    z-index: 10;
+    filter: drop-shadow(0 0 15px rgba(0,217,206,0.8));
+  }
+
+  .result {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    min-height: 24px;
+  }
+  
+  .prize-won {
+    animation: fadeInScale 0.6s ease-out;
+    margin-bottom: 8px;
+  }
+  
+  .try-again {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  @keyframes fadeInScale {
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .confetti {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  
+  .confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #00d9ce;
+    opacity: 0;
+    animation: confettiFall 1.2s ease-out forwards;
+  }
+  
+  @keyframes confettiFall {
+    0% {
+      opacity: 1;
+      transform: translateY(0) rotate(0deg);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(150px) rotate(360deg);
+    }
+  }
+  
+  .loading {
+    display: inline-block;
+  }
+  
+  .loading-dots::after {
+    content: '';
+    animation: dots 1.5s steps(4, end) infinite;
+  }
+  
+  @keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+  }
+
+  .small {
+    margin-top: 10px;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="floating-particles" id="particles"></div>
+
+<div class="card">
+  <h1>🎰 Ruleta Zero Shake</h1>
+  <p>Ingresa tu código y gira la ruleta</p>
+
+  <input id="codigo" placeholder="Ej: ZS-DEMO-01">
+  <button onclick="girar()">Girar ruleta</button>
+
+  <div class="wheel-container">
+    <div class="needle"></div>
+    <div class="wheel" id="wheel">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 335'%3E%3Cdefs%3E%3CradialGradient id='bodyGrad'%3E%3Cstop offset='0%25' stop-color='%2330e8ff'/%3E%3Cstop offset='60%25' stop-color='%2300d0ff'/%3E%3Cstop offset='100%25' stop-color='%2300a0cc'/%3E%3C/radialGradient%3E%3ClinearGradient id='shirtGrad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2398eeee'/%3E%3Cstop offset='100%25' stop-color='%2350d0d0'/%3E%3C/linearGradient%3E%3ClinearGradient id='pantsGrad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23556677'/%3E%3Cstop offset='100%25' stop-color='%23334455'/%3E%3C/linearGradient%3E%3C/defs%3E%3C!-- Sombra --%3E%3Cellipse cx='100' cy='320' rx='58' ry='12' fill='rgba(0,0,0,0.25)'/%3E%3C!-- Piernas --%3E%3Cellipse cx='82' cy='254' rx='15' ry='32' fill='url(%23pantsGrad)'/%3E%3Cellipse cx='118' cy='254' rx='15' ry='32' fill='url(%23pantsGrad)'/%3E%3C!-- Zapatillas base blancas --%3E%3Cellipse cx='82' cy='290' rx='21' ry='14' fill='%23ffffff'/%3E%3Cellipse cx='118' cy='290' rx='21' ry='14' fill='%23ffffff'/%3E%3C!-- Parte frontal azul zapatilla --%3E%3Cpath d='M 61 290 Q 68 281 82 281 L 94 294 Q 82 293 65 293 Z' fill='%2300a8dd'/%3E%3Cpath d='M 97 290 Q 104 281 118 281 L 130 294 Q 118 293 101 293 Z' fill='%2300a8dd'/%3E%3C!-- Detalles azul zapatilla --%3E%3Cellipse cx='70' cy='289' rx='8' ry='6' fill='%2300a8dd' opacity='0.3'/%3E%3Cellipse cx='106' cy='289' rx='8' ry='6' fill='%2300a8dd' opacity='0.3'/%3E%3C!-- Cordones --%3E%3Cline x1='71' y1='286' x2='82' y2='286' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cline x1='106' y1='286' x2='117' y2='286' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C!-- Medias verdes --%3E%3Crect x='75' y='280' width='14' height='8' fill='%2378d858' rx='2'/%3E%3Crect x='111' y='280' width='14' height='8' fill='%2378d858' rx='2'/%3E%3C!-- Cuerpo camiseta --%3E%3Cellipse cx='100' cy='195' rx='48' ry='65' fill='url(%23shirtGrad)'/%3E%3C!-- Mangas cortas --%3E%3Cellipse cx='54' cy='172' rx='18' ry='26' fill='url(%23shirtGrad)' transform='rotate(-20 54 172)'/%3E%3Cellipse cx='146' cy='172' rx='18' ry='26' fill='url(%23shirtGrad)' transform='rotate(20 146 172)'/%3E%3C!-- Cuello redondo --%3E%3Cellipse cx='100' cy='158' rx='16' ry='8' fill='%2368d8d8'/%3E%3C!-- Logo hoja --%3E%3Cpath d='M 100 198 Q 110 188 116 198 Q 114 209 100 212 Q 86 209 84 198 Q 90 188 100 198 Z' fill='%23b0f078'/%3E%3Cpath d='M 100 198 L 100 212' stroke='%2378c850' stroke-width='2.2'/%3E%3Cpath d='M 100 200 Q 106 204 110 208' stroke='%2378c850' stroke-width='1.2' opacity='0.6'/%3E%3C!-- Brazos --%3E%3Cellipse cx='50' cy='188' rx='18' ry='44' fill='url(%23bodyGrad)' transform='rotate(-35 50 188)'/%3E%3Cellipse cx='150' cy='188' rx='18' ry='44' fill='url(%23bodyGrad)' transform='rotate(35 150 188)'/%3E%3C!-- Manos blancas --%3E%3Cellipse cx='40' cy='218' rx='15' ry='15' fill='%23ffffff'/%3E%3Cellipse cx='160' cy='218' rx='15' ry='15' fill='%23ffffff'/%3E%3Cellipse cx='40' cy='222' rx='12' ry='7' fill='%23e0e0e0'/%3E%3Cellipse cx='160' cy='222' rx='12' ry='7' fill='%23e0e0e0'/%3E%3C!-- Cabeza forma gota --%3E%3Cpath d='M 100 38 Q 55 70 55 120 Q 55 158 100 177 Q 145 158 145 120 Q 145 70 100 38 Z' fill='url(%23bodyGrad)'/%3E%3C!-- Punta de gota --%3E%3Cpath d='M 100 38 Q 90 48 90 62 Q 90 72 100 80 Q 110 72 110 62 Q 110 48 100 38 Z' fill='%2380f0ff' opacity='0.5'/%3E%3C!-- Gorro banda superior verde --%3E%3Cellipse cx='100' cy='84' rx='48' ry='10' fill='%23b0f078'/%3E%3C!-- Banda blanca centro --%3E%3Crect x='52' y='82' width='96' height='12' rx='6' fill='%23ffffff'/%3E%3C!-- Banda inferior verde --%3E%3Cellipse cx='100' cy='93' rx='48' ry='6' fill='%23b0f078'/%3E%3C!-- Cejas gruesas --%3E%3Cpath d='M 68 102 Q 76 97 86 100' stroke='%23001122' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 132 102 Q 124 97 114 100' stroke='%23001122' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C!-- Ojos blancos grandes --%3E%3Cellipse cx='77' cy='125' rx='13' ry='16' fill='%23ffffff'/%3E%3Cellipse cx='123' cy='125' rx='13' ry='16' fill='%23ffffff'/%3E%3C!-- Iris gris --%3E%3Cellipse cx='77' cy='127' rx='9' ry='12' fill='%23556677'/%3E%3Cellipse cx='123' cy='127' rx='9' ry='12' fill='%23556677'/%3E%3C!-- Pupilas negras --%3E%3Cellipse cx='77' cy='128' rx='6' ry='9' fill='%23000000'/%3E%3Cellipse cx='123' cy='128' rx='6' ry='9' fill='%23000000'/%3E%3C!-- Brillos ojos --%3E%3Cellipse cx='80' cy='123' rx='4' ry='5' fill='white'/%3E%3Cellipse cx='126' cy='123' rx='4' ry='5' fill='white'/%3E%3Ccircle cx='79' cy='131' r='2' fill='white' opacity='0.7'/%3E%3Ccircle cx='125' cy='131' r='2' fill='white' opacity='0.7'/%3E%3C!-- Mejillas rosadas --%3E%3Cellipse cx='52' cy='136' rx='12' ry='10' fill='%23ffb0d8' opacity='0.85'/%3E%3Cellipse cx='148' cy='136' rx='12' ry='10' fill='%23ffb0d8' opacity='0.85'/%3E%3C!-- Boca sonriente abierta --%3E%3Cpath d='M 78 146 Q 100 158 122 146' stroke='%23000000' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C!-- Interior boca rojo --%3E%3Cpath d='M 80 147 Q 100 156 120 147' fill='%23cc1144'/%3E%3Cpath d='M 84 149 Q 100 154 116 149' fill='%23ff3366'/%3E%3C!-- Brillo sutil --%3E%3Cellipse cx='82' cy='108' rx='10' ry='18' fill='white' opacity='0.25'/%3E%3Cellipse cx='78' cy='98' rx='6' ry='10' fill='white' opacity='0.35'/%3E%3C/svg%3E" 
+           class="mascot-logo" 
+           alt="Zero Shake Mascot">
+      
+      <span data-icon="◈">10% OFF</span>
+      <span data-icon="⟡">BATIDO GRATIS</span>
+      <span data-icon="⬡">UPGRADE PROTEÍNA</span>
+      <span data-icon="◇">2X1</span>
+      <span data-icon="✕">SIGUE CUIDÁNDOTE</span>
+    </div>
+  </div>
+
+  <div class="result" id="resultado"></div>
+  <div class="small">1 código = 1 giro</div>
+</div>
+
+<script>
+  // Crear partículas flotantes
+  function createFloatingParticles() {
+    const container = document.getElementById('particles');
+    const particleCount = 15;
+    
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      
+      // Tamaño aleatorio
+      const size = Math.random() * 60 + 20;
+      particle.style.width = size + 'px';
+      particle.style.height = size + 'px';
+      
+      // Posición inicial aleatoria
+      particle.style.left = Math.random() * 100 + '%';
+      
+      // Duración aleatoria
+      const duration = Math.random() * 15 + 10;
+      particle.style.animationDuration = duration + 's';
+      
+      // Delay aleatorio
+      particle.style.animationDelay = Math.random() * 5 + 's';
+      
+      container.appendChild(particle);
+    }
+  }
+  
+  // Crear partículas al cargar
+  createFloatingParticles();
+
+  const WEBHOOK_URL = "https://felipardo.app.n8n.cloud/webhook/ruleta-validar";
+  const WHATSAPP_LINK = "https://wa.me/TUNUMERO"; // Cambia esto por tu link de WhatsApp
+  
+  const premiosMap = {
+    "10% OFF": 0,
+    "BATIDO GRATIS": 1,
+    "UPGRADE PROTEÍNA": 2,
+    "2X1": 3,
+    "SIGUE CUIDÁNDOTE": 4
+  };
+
+  const codigosUsados = {};
+
+  async function girar() {
+    const input = document.getElementById("codigo").value;
+    const codigo = input.toUpperCase().trim();
+    const wheel = document.getElementById("wheel");
+    const resultado = document.getElementById("resultado");
+    const boton = document.querySelector("button");
+    const card = document.querySelector(".card");
+
+    if (!codigo) {
+      resultado.innerText = "⚠️ Ingresa un código";
+      return;
+    }
+
+    if (codigosUsados[codigo]) {
+      resultado.innerText = "🚫 Este código ya fue usado en esta sesión";
+      return;
+    }
+
+    // Deshabilitar botón y mostrar loading
+    boton.disabled = true;
+    resultado.innerHTML = '<span class="loading">Verificando código<span class="loading-dots"></span></span>';
+
+    try {
+      // Enviar código al webhook
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ codigo: codigo })
+      });
+
+      const data = await response.json();
+
+      if (!data.ok) {
+        // Código inválido o ya utilizado
+        resultado.innerText = data.message || "❌ Código inválido o ya utilizado";
+        boton.disabled = false;
+        return;
+      }
+
+      // Código válido - obtener el premio desde n8n
+      const premioRecibido = data.premio;
+      const indicePremio = premiosMap[premioRecibido];
+
+      if (indicePremio === undefined) {
+        resultado.innerText = "⚠️ Error: Premio no reconocido";
+        boton.disabled = false;
+        return;
+      }
+
+      // Limpiar mensaje de verificación
+      resultado.innerText = "";
+
+      // Resetear la ruleta antes de girar (eliminar transición)
+      wheel.style.transition = 'none';
+      wheel.style.transform = 'rotate(0deg)';
+      
+      // Forzar reflow para aplicar el reset
+      void wheel.offsetWidth;
+      
+      // Restaurar transición
+      wheel.style.transition = 'transform 4s cubic-bezier(.17,.67,.26,1)';
+
+      // Calcular rotación para que caiga en el premio específico
+      const centrosSegmentos = [40, 106, 182, 254, 338];
+      const anguloDelPremio = centrosSegmentos[indicePremio];
+      let rotacionNecesaria = 180 - anguloDelPremio;
+      
+      const vueltas = 5 + Math.floor(Math.random() * 3);
+      const anguloFinal = vueltas * 360 + rotacionNecesaria;
+      
+      wheel.style.transform = `rotate(${anguloFinal}deg)`;
+      codigosUsados[codigo] = premioRecibido;
+
+      // Mostrar resultado después de la animación
+      setTimeout(() => {
+        if (premioRecibido === "SIGUE CUIDÁNDOTE") {
+          resultado.innerHTML = `<div class="try-again">✦ Sigue intentándolo</div>`;
+        } else {
+          // Crear confetti minimalista
+          const confettiContainer = document.createElement('div');
+          confettiContainer.className = 'confetti';
+          card.appendChild(confettiContainer);
+          
+          // Generar piezas de confetti
+          for (let i = 0; i < 15; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random() * 100 + '%';
+            piece.style.animationDelay = Math.random() * 0.3 + 's';
+            piece.style.background = i % 3 === 0 ? '#00d9ce' : i % 3 === 1 ? '#d4af37' : '#ffffff';
+            confettiContainer.appendChild(piece);
+          }
+          
+          resultado.innerHTML = `
+            <div class="prize-won">Premio desbloqueado: ${premioRecibido} ❖</div>
+            <button onclick="window.open('https://wa.me/56912345678', '_blank')" class="btn-claim">
+              RECLAMAR PREMIO
+            </button>
+          `;
+          
+          // Limpiar confetti después de la animación
+          setTimeout(() => {
+            confettiContainer.remove();
+          }, 1500);
+        }
+        boton.disabled = false;
+      }, 4200);
+
+    } catch (error) {
+      console.error("Error al validar código:", error);
+      resultado.innerText = "⚠️ Error de conexión. Intenta de nuevo";
+      boton.disabled = false;
+    }
+  }
+</script>
+
+</body>
+</html>
