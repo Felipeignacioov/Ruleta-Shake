@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ruleta Zero Shake</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Partículas flotantes de fondo */
+  .floating-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .particle {
+    position: absolute;
+    background: radial-gradient(circle, rgba(0, 217, 206, 0.15), transparent);
+    border-radius: 50%;
+    animation: float linear infinite;
+  }
+  
+  @keyframes float {
+    0% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-100px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  .card {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 35px;
+    width: 98%;
+    max-width: 600px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: -80px;
+    transform: scale(1.2075);
+    z-index: 1;
+    animation: cardEntrance 0.8s ease-out;
+  }
+  
+  @keyframes cardEntrance {
+    0% {
+      opacity: 0;
+      transform: scale(1.2075) translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1.2075) translateY(0);
+    }
+  }
+
+  h1 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    background: linear-gradient(135deg, #00d9ce, #00a89e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  p {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    margin-top: 20px;
+    font-size: 14px;
+    outline: none;
+    color: #fff;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  input::placeholder {
+    color: rgba(255,255,255,0.4);
+  }
+
+  button {
+    margin-top: 18px;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    background: #ffffff;
+    color: #0a0a0a;
+    cursor: pointer;
+    transition: all .2s ease;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255,255,255,.2);
+  }
+  
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .wheel-container {
+    position: relative;
+    margin: 25px auto;
+    width: 448.8px;
+    height: 448.8px;
+  }
+
+  .wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 8px solid #00d9ce;
+    box-shadow: 
+      0 0 27px rgba(0,217,206,0.54),
+      0 0 54px rgba(0,217,206,0.36),
+      0 0 81px rgba(0,217,206,0.27),
+      0 8px 32px rgba(0,217,206,0.27),
+      inset 0 0 40px rgba(0,0,0,0.1);
+    position: relative;
+    transition: transform 4s cubic-bezier(.17,.67,.26,1);
+    background: conic-gradient(
+      from 0deg,
+      #0a0a0a 0deg 72deg,
+      #1a1a1a 72deg 144deg,
+      #2d2d2d 144deg 216deg,
+      #1f1f1f 216deg 288deg,
+      #252525 288deg 360deg
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .wheel::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: 
+      conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 72deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 144deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 216deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 288deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg);
+    pointer-events: none;
+  }
+  
+  .wheel::after {
+    content: '';
+    position: absolute;
+    width: 97.2px;
+    height: 97.2px;
+    background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(240,248,255,0.95) 100%);
+    border-radius: 50%;
+    border: 3px solid #00d9ce;
+    box-shadow: 
+      0 0 18px rgba(0,217,206,0.45),
+      inset 0 0 20px rgba(0,217,206,0.1),
+      inset 0 2px 8px rgba(0,0,0,0.08),
+      inset 0 -2px 6px rgba(255,255,255,0.4);
+    z-index: 5;
+  }
+  
+  .mascot-logo {
+    position: absolute;
+    width: 78.75px;
+    height: 78.75px;
+    z-index: 6;
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.12)) drop-shadow(0 1px 3px rgba(0,0,0,0.08));
+    animation: mascotBreath 3s ease-in-out infinite;
+  }
+  
+  @keyframes mascotBreath {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  /* Premios centrados en cada segmento */
+  .wheel span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: 0% 0%;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14.5475px;
+    pointer-events: none;
+    line-height: 1.3;
+    width: 85px;
+    margin-top: -8px;
+    margin-left: -5px;
+    color: #ffffff;
+    text-shadow: 
+      0 2px 8px rgba(0,0,0,0.5);
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    opacity: 0.95;
+  }
+  
+  .wheel span::before {
+    content: attr(data-icon);
+    display: block;
+    font-size: 22.264px;
+    margin-bottom: 2px;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+  }
+
+  /* Cada texto rotado según su segmento (72° cada uno) */
+  .wheel span:nth-child(2) { 
+    transform: rotate(40deg) translateX(70px) rotate(-90deg);
+  }
+  .wheel span:nth-child(3) { 
+    transform: rotate(106deg) translateX(56px) rotate(-90deg);
+  }
+  .wheel span:nth-child(4) { 
+    transform: rotate(182deg) translateX(52px) rotate(-90deg);
+  }
+  .wheel span:nth-child(5) { 
+    transform: rotate(254deg) translateX(50px) rotate(-90deg);
+  }
+  .wheel span:nth-child(6) { 
+    transform: rotate(333deg) translateX(50px) rotate(-90deg);
+  }
+
+  .needle {
+    position: absolute;
+    top: 50%;
+    left: -25px;
+    transform: translateY(-50%) rotate(-90deg);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 50px solid #00d9ce;
+    z-index: 10;
+    filter: drop-shadow(0 0 13.5px rgba(0,217,206,0.72));
+  }
+
+  .result {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    min-height: 24px;
+  }
+  
+  .prize-won {
+    animation: fadeInScale 0.6s ease-out;
+    margin-bottom: 8px;
+  }
+  
+  .try-again {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  @keyframes fadeInScale {
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .confetti {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  
+  .confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #00d9ce;
+    opacity: 0;
+    animation: confettiFall 1.2s ease-out forwards;
+  }
+  
+  @keyframes confettiFall {
+    0% {
+      opacity: 1;
+      transform: translateY(0) rotate(0deg);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(150px) rotate(360deg);
+    }
+  }
+  
+  .loading {
+    display: inline-block;
+  }
+  
+  .loading-dots::after {
+    content: '';
+    animation: dots 1.5s steps(4, end) infinite;
+  }
+  
+  @keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+  }
+
+  .small {
+    margin-top: 10px;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="floating-particles" id="particles"></div>
+
+<div class="card">
+  <h1>🎰 Ruleta Zero Shake</h1>
+  <p>Ingresa tu código y gira la ruleta</p>
+
+  <input id="codigo" placeholder="Ej: ZS-DEMO-01">
+  <button onclick="girar()">Girar ruleta</button>
+
+  <div class="wheel-container">
+    <div class="needle"></div>
+    <div class="wheel" id="wheel">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 335'%3E%3Cdefs%3E%3CradialGradient id='bodyGrad' cx='38%25' cy='28%25'%3E%3Cstop offset='0%25' stop-color='%2378ecff'/%3E%3Cstop offset='40%25' stop-color='%2328d8ff'/%3E%3Cstop offset='100%25' stop-color='%23009acc'/%3E%3C/radialGradient%3E%3ClinearGradient id='shirtGrad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23d0fcfc'/%3E%3Cstop offset='35%25' stop-color='%23a0eeee'/%3E%3Cstop offset='100%25' stop-color='%2368d8d8'/%3E%3C/linearGradient%3E%3CradialGradient id='shirtShine' cx='25%25' cy='18%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.6'/%3E%3Cstop offset='50%25' stop-color='%23ffffff' stop-opacity='0.2'/%3E%3Cstop offset='100%25' stop-color='%23ffffff' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='pantsGrad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23889aaa'/%3E%3Cstop offset='100%25' stop-color='%23445566'/%3E%3C/linearGradient%3E%3CradialGradient id='shoeGrad' cx='42%25' cy='28%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff'/%3E%3Cstop offset='65%25' stop-color='%23f2f2f2'/%3E%3Cstop offset='100%25' stop-color='%23d5d5d5'/%3E%3C/radialGradient%3E%3CradialGradient id='gloveGrad' cx='38%25' cy='22%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff'/%3E%3Cstop offset='55%25' stop-color='%23f6f6f6'/%3E%3Cstop offset='100%25' stop-color='%23dedede'/%3E%3C/radialGradient%3E%3ClinearGradient id='headbandGrad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23d8fca0'/%3E%3Cstop offset='50%25' stop-color='%23b0e878'/%3E%3Cstop offset='100%25' stop-color='%2390d058'/%3E%3C/linearGradient%3E%3C/defs%3E%3C!-- Sombra base realista --%3E%3Cellipse cx='100' cy='320' rx='62' ry='14' fill='rgba(0,0,0,0.32)'/%3E%3Cellipse cx='100' cy='320' rx='48' ry='10' fill='rgba(0,0,0,0.18)'/%3E%3C!-- Piernas con volumen 3D --%3E%3Cellipse cx='85' cy='248' rx='13' ry='28' fill='url(%23pantsGrad)'/%3E%3Cellipse cx='115' cy='248' rx='13' ry='28' fill='url(%23pantsGrad)'/%3E%3Cellipse cx='82' cy='241' rx='9' ry='13' fill='%239aacbb' opacity='0.45'/%3E%3Cellipse cx='112' cy='241' rx='9' ry='13' fill='%239aacbb' opacity='0.45'/%3E%3Cellipse cx='88' cy='257' rx='8' ry='11' fill='%23334455' opacity='0.35'/%3E%3Cellipse cx='118' cy='257' rx='8' ry='11' fill='%23334455' opacity='0.35'/%3E%3C!-- Zapatillas premium --%3E%3Cellipse cx='85' cy='282' rx='18' ry='12' fill='url(%23shoeGrad)'/%3E%3Cellipse cx='115' cy='282' rx='18' ry='12' fill='url(%23shoeGrad)'/%3E%3Cellipse cx='81' cy='276' rx='14' ry='5' fill='%23ffffff' opacity='0.65'/%3E%3Cellipse cx='111' cy='276' rx='14' ry='5' fill='%23ffffff' opacity='0.65'/%3E%3Cellipse cx='89' cy='287' rx='13' ry='4' fill='%23b8b8b8' opacity='0.45'/%3E%3Cellipse cx='119' cy='287' rx='13' ry='4' fill='%23b8b8b8' opacity='0.45'/%3E%3Cpath d='M 67 282 Q 73 275 85 275 L 95 286 Q 85 285 71 285 Z' fill='%2300a8dd'/%3E%3Cpath d='M 100 282 Q 106 275 115 275 L 125 286 Q 115 285 104 285 Z' fill='%2300a8dd'/%3E%3Cellipse cx='74' cy='278' rx='6.5' ry='4.5' fill='%2338c8f0' opacity='0.55'/%3E%3Cellipse cx='106' cy='278' rx='6.5' ry='4.5' fill='%2338c8f0' opacity='0.55'/%3E%3Cline x1='75' y1='279' x2='85' y2='279' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='105' y1='279' x2='115' y2='279' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C!-- Medias verdes --%3E%3Crect x='78' y='273' width='14' height='7' fill='%2398e870' rx='2'/%3E%3Crect x='108' y='273' width='14' height='7' fill='%2398e870' rx='2'/%3E%3Cellipse cx='85' cy='274' rx='6' ry='2' fill='%23c0f898' opacity='0.65'/%3E%3Cellipse cx='115' cy='274' rx='6' ry='2' fill='%23c0f898' opacity='0.65'/%3E%3C!-- Cuerpo camiseta glossy --%3E%3Cellipse cx='100' cy='190' rx='38' ry='50' fill='url(%23shirtGrad)'/%3E%3Cellipse cx='90' cy='176' rx='28' ry='22' fill='url(%23shirtShine)'/%3E%3Cellipse cx='100' cy='173' rx='33' ry='13' fill='%23e0fcfc' opacity='0.55'/%3E%3Cellipse cx='106' cy='217' rx='29' ry='19' fill='%2358c8c8' opacity='0.28'/%3E%3C!-- Mangas con volumen --%3E%3Cellipse cx='62' cy='168' rx='15' ry='20' fill='url(%23shirtGrad)' transform='rotate(-18 62 168)'/%3E%3Cellipse cx='138' cy='168' rx='15' ry='20' fill='url(%23shirtGrad)' transform='rotate(18 138 168)'/%3E%3Cellipse cx='59' cy='162' rx='11' ry='11' fill='%23d0fcfc' opacity='0.55' transform='rotate(-18 59 162)'/%3E%3Cellipse cx='141' cy='162' rx='11' ry='11' fill='%23d0fcfc' opacity='0.55' transform='rotate(18 141 162)'/%3E%3Cellipse cx='65' cy='174' rx='8' ry='9' fill='%2378d8d8' opacity='0.35' transform='rotate(-18 65 174)'/%3E%3Cellipse cx='135' cy='174' rx='8' ry='9' fill='%2378d8d8' opacity='0.35' transform='rotate(18 135 174)'/%3E%3C!-- Cuello --%3E%3Cellipse cx='100' cy='155' rx='14' ry='7' fill='%2388d8d8'/%3E%3Cellipse cx='100' cy='152' rx='10' ry='3' fill='%23bce8e8' opacity='0.6'/%3E%3C!-- Logo hoja premium --%3E%3Cpath d='M 100 192 Q 107 185 111 192 Q 109 199 100 201 Q 91 199 89 192 Q 93 185 100 192 Z' fill='url(%23headbandGrad)'/%3E%3Cpath d='M 100 192 L 100 201' stroke='%2380c850' stroke-width='1.8'/%3E%3Cpath d='M 100 193 Q 104 196 107 199' stroke='%2380c850' stroke-width='0.9' opacity='0.5'/%3E%3Cellipse cx='103' cy='193' rx='2.8' ry='3.8' fill='%23f0fcd0' opacity='0.65'/%3E%3C!-- Brazos desde torso --%3E%3Cellipse cx='64' cy='175' rx='13' ry='34' fill='url(%23bodyGrad)' transform='rotate(-20 64 175)'/%3E%3Cellipse cx='136' cy='175' rx='13' ry='34' fill='url(%23bodyGrad)' transform='rotate(20 136 175)'/%3E%3Cellipse cx='62' cy='166' rx='7' ry='19' fill='%2398ecff' opacity='0.55' transform='rotate(-20 62 166)'/%3E%3Cellipse cx='138' cy='166' rx='7' ry='19' fill='%2398ecff' opacity='0.55' transform='rotate(20 138 166)'/%3E%3Cellipse cx='66' cy='185' rx='6' ry='13' fill='%23008cbb' opacity='0.28' transform='rotate(-20 66 185)'/%3E%3Cellipse cx='134' cy='185' rx='6' ry='13' fill='%23008cbb' opacity='0.28' transform='rotate(20 134 185)'/%3E%3C!-- Guantes premium --%3E%3Cellipse cx='54' cy='206' rx='12' ry='12' fill='url(%23gloveGrad)'/%3E%3Cellipse cx='146' cy='206' rx='12' ry='12' fill='url(%23gloveGrad)'/%3E%3Cellipse cx='52' cy='201' rx='7' ry='5' fill='%23ffffff' opacity='0.75'/%3E%3Cellipse cx='144' cy='201' rx='7' ry='5' fill='%23ffffff' opacity='0.75'/%3E%3Cellipse cx='56' cy='211' rx='8' ry='4' fill='%23c0c0c0' opacity='0.4'/%3E%3Cellipse cx='148' cy='211' rx='8' ry='4' fill='%23c0c0c0' opacity='0.4'/%3E%3C!-- Cabeza gota 3D --%3E%3Cpath d='M 100 42 Q 60 70 60 118 Q 60 152 100 168 Q 140 152 140 118 Q 140 70 100 42 Z' fill='url(%23bodyGrad)'/%3E%3Cellipse cx='83' cy='108' rx='24' ry='42' fill='%23a0ecff' opacity='0.38' transform='rotate(-13 83 108)'/%3E%3Cellipse cx='94' cy='93' rx='30' ry='37' fill='%23c0f4ff' opacity='0.28' transform='rotate(-6 94 93)'/%3E%3Cellipse cx='110' cy='127' rx='16' ry='27' fill='%23007caa' opacity='0.18' transform='rotate(16 110 127)'/%3E%3C!-- Punta brillante --%3E%3Cpath d='M 100 42 Q 93 50 93 61 Q 93 70 100 76 Q 107 70 107 61 Q 107 50 100 42 Z' fill='%23e8feff' opacity='0.55'/%3E%3Cellipse cx='95' cy='53' rx='7.5' ry='11' fill='%23f8feff' opacity='0.75'/%3E%3Ccircle cx='97' cy='49' r='3.5' fill='%23ffffff' opacity='0.85'/%3E%3C!-- Gorro premium --%3E%3Cellipse cx='100' cy='87' rx='44' ry='8' fill='url(%23headbandGrad)'/%3E%3Cellipse cx='100' cy='84' rx='42' ry='4' fill='%23f0fcd0' opacity='0.65'/%3E%3Crect x='56' y='85' width='88' height='10' rx='5' fill='%23ffffff'/%3E%3Cellipse cx='90' cy='87' rx='32' ry='3.5' fill='%23ffffff' opacity='0.6'/%3E%3Cellipse cx='100' cy='94' rx='44' ry='5' fill='url(%23headbandGrad)'/%3E%3Cellipse cx='100' cy='91' rx='40' ry='2.5' fill='%23d0f8a0' opacity='0.6'/%3E%3Cellipse cx='100' cy='97' rx='44' ry='2' fill='%2300b0dd' opacity='0.22'/%3E%3C!-- Cejas --%3E%3Cpath d='M 72 105 Q 78 101 86 103' stroke='%23000000' stroke-width='4.2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 128 105 Q 122 101 114 103' stroke='%23000000' stroke-width='4.2' fill='none' stroke-linecap='round'/%3E%3C!-- Ojos 3D --%3E%3Cellipse cx='79' cy='123' rx='11.5' ry='14' fill='%23ffffff'/%3E%3Cellipse cx='121' cy='123' rx='11.5' ry='14' fill='%23ffffff'/%3E%3Cellipse cx='79' cy='119' rx='9' ry='6' fill='%23fcfcfc' opacity='0.65'/%3E%3Cellipse cx='121' cy='119' rx='9' ry='6' fill='%23fcfcfc' opacity='0.65'/%3E%3Cellipse cx='79' cy='125' rx='8' ry='10.5' fill='%23556677'/%3E%3Cellipse cx='121' cy='125' rx='8' ry='10.5' fill='%23556677'/%3E%3Cellipse cx='79' cy='126' rx='5.5' ry='8' fill='%23001122'/%3E%3Cellipse cx='121' cy='126' rx='5.5' ry='8' fill='%23001122'/%3E%3Cellipse cx='81.5' cy='121' rx='3.5' ry='4.5' fill='white'/%3E%3Cellipse cx='123.5' cy='121' rx='3.5' ry='4.5' fill='white'/%3E%3Ccircle cx='81' cy='129' r='1.5' fill='white' opacity='0.75'/%3E%3Ccircle cx='123' cy='129' r='1.5' fill='white' opacity='0.75'/%3E%3C!-- Mejillas --%3E%3Cellipse cx='58' cy='136' rx='9.5' ry='7.5' fill='%23ffc8e8' opacity='0.88'/%3E%3Cellipse cx='142' cy='136' rx='9.5' ry='7.5' fill='%23ffc8e8' opacity='0.88'/%3E%3Cellipse cx='55' cy='132' rx='6.5' ry='4.5' fill='%23ffe0f0' opacity='0.65'/%3E%3Cellipse cx='139' cy='132' rx='6.5' ry='4.5' fill='%23ffe0f0' opacity='0.65'/%3E%3C!-- Boca --%3E%3Cpath d='M 84 146 Q 100 154 116 146' stroke='%23001122' stroke-width='3.8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 86 147 Q 100 153 114 147' fill='%23dd1155'/%3E%3Cpath d='M 88 148 Q 100 152 112 148' fill='%23ff5588'/%3E%3Cellipse cx='100' cy='150' rx='11' ry='3.5' fill='%23ff8899' opacity='0.55'/%3E%3C/svg%3E"url(%23gloveGrad)'/%3E%3Cellipse cx='148' cy='203' rx='11' ry='11' fill='url(%23gloveGrad)'/%3E%3Cellipse cx='50' cy='199' rx='6' ry='4' fill='%23ffffff' opacity='0.7'/%3E%3Cellipse cx='146' cy='199' rx='6' ry='4' fill='%23ffffff' opacity='0.7'/%3E%3Cellipse cx='54' cy='207' rx='7' ry='3' fill='%23c8c8c8' opacity='0.35'/%3E%3Cellipse cx='150' cy='207' rx='7' ry='3' fill='%23c8c8c8' opacity='0.35'/%3E%3C!-- Cabeza gota con render 3D --%3E%3Cpath d='M 100 42 Q 60 70 60 118 Q 60 152 100 168 Q 140 152 140 118 Q 140 70 100 42 Z' fill='url(%23bodyGrad)'/%3E%3Cellipse cx='85' cy='110' rx='22' ry='40' fill='%2390e8ff' opacity='0.35' transform='rotate(-12 85 110)'/%3E%3Cellipse cx='95' cy='95' rx='28' ry='35' fill='%23b0f0ff' opacity='0.25' transform='rotate(-5 95 95)'/%3E%3Cellipse cx='108' cy='125' rx='15' ry='25' fill='%23007caa' opacity='0.15' transform='rotate(15 108 125)'/%3E%3C!-- Punta gota brillante --%3E%3Cpath d='M 100 42 Q 93 50 93 61 Q 93 70 100 76 Q 107 70 107 61 Q 107 50 100 42 Z' fill='%23d8fcff' opacity='0.5'/%3E%3Cellipse cx='96' cy='54' rx='7' ry='10' fill='%23f0feff' opacity='0.7'/%3E%3Ccircle cx='98' cy='50' r='3' fill='%23ffffff' opacity='0.8'/%3E%3C!-- Gorro deportivo premium --%3E%3Cellipse cx='100' cy='87' rx='44' ry='8' fill='url(%23headbandGrad)'/%3E%3Cellipse cx='100' cy='85' rx='42' ry='4' fill='%23e8f8c8' opacity='0.6'/%3E%3Crect x='56' y='85' width='88' height='10' rx='5' fill='%23ffffff'/%3E%3Cellipse cx='92' cy='87' rx='30' ry='3' fill='%23ffffff' opacity='0.5'/%3E%3Cellipse cx='100' cy='94' rx='44' ry='5' fill='url(%23headbandGrad)'/%3E%3Cellipse cx='100' cy='92' rx='40' ry='2' fill='%23c8f098' opacity='0.5'/%3E%3Cellipse cx='100' cy='97' rx='44' ry='2' fill='%2300b0dd' opacity='0.2'/%3E%3C!-- Cejas --%3E%3Cpath d='M 72 105 Q 78 101 86 103' stroke='%23000000' stroke-width='4.2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 128 105 Q 122 101 114 103' stroke='%23000000' stroke-width='4.2' fill='none' stroke-linecap='round'/%3E%3C!-- Ojos con profundidad --%3E%3Cellipse cx='79' cy='123' rx='11.5' ry='14' fill='%23ffffff'/%3E%3Cellipse cx='121' cy='123' rx='11.5' ry='14' fill='%23ffffff'/%3E%3Cellipse cx='79' cy='120' rx='9' ry='6' fill='%23f8f8f8' opacity='0.6'/%3E%3Cellipse cx='121' cy='120' rx='9' ry='6' fill='%23f8f8f8' opacity='0.6'/%3E%3Cellipse cx='79' cy='125' rx='8' ry='10.5' fill='%23556677'/%3E%3Cellipse cx='121' cy='125' rx='8' ry='10.5' fill='%23556677'/%3E%3Cellipse cx='79' cy='126' rx='5.5' ry='8' fill='%23001122'/%3E%3Cellipse cx='121' cy='126' rx='5.5' ry='8' fill='%23001122'/%3E%3Cellipse cx='81.5' cy='121' rx='3.5' ry='4.5' fill='white'/%3E%3Cellipse cx='123.5' cy='121' rx='3.5' ry='4.5' fill='white'/%3E%3Ccircle cx='81' cy='129' r='1.5' fill='white' opacity='0.7'/%3E%3Ccircle cx='123' cy='129' r='1.5' fill='white' opacity='0.7'/%3E%3C!-- Mejillas con volumen --%3E%3Cellipse cx='58' cy='136' rx='9.5' ry='7.5' fill='%23ffc8e8' opacity='0.85'/%3E%3Cellipse cx='142' cy='136' rx='9.5' ry='7.5' fill='%23ffc8e8' opacity='0.85'/%3E%3Cellipse cx='56' cy='133' rx='6' ry='4' fill='%23ffe0f0' opacity='0.6'/%3E%3Cellipse cx='140' cy='133' rx='6' ry='4' fill='%23ffe0f0' opacity='0.6'/%3E%3C!-- Boca con profundidad --%3E%3Cpath d='M 84 146 Q 100 154 116 146' stroke='%23001122' stroke-width='3.8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 86 147 Q 100 153 114 147' fill='%23dd1155'/%3E%3Cpath d='M 88 148 Q 100 152 112 148' fill='%23ff5588'/%3E%3Cellipse cx='100' cy='150' rx='10' ry='3' fill='%23ff7799' opacity='0.5'/%3E%3C/svg%3E" ry='2' fill='%2300b0dd' opacity='0.2'/%3E%3C!-- Cejas --%3E%3Cpath d='M 72 105 Q 78 101 86 103' stroke='%23000000' stroke-width='4.2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 128 105 Q 122 101 114 103' stroke='%23000000' stroke-width='4.2' fill='none' stroke-linecap='round'/%3E%3C!-- Ojos --%3E%3Cellipse cx='79' cy='123' rx='11.5' ry='14' fill='%23ffffff'/%3E%3Cellipse cx='121' cy='123' rx='11.5' ry='14' fill='%23ffffff'/%3E%3Cellipse cx='79' cy='121' rx='9' ry='6' fill='%23f0f0f0' opacity='0.5'/%3E%3Cellipse cx='121' cy='121' rx='9' ry='6' fill='%23f0f0f0' opacity='0.5'/%3E%3Cellipse cx='79' cy='125' rx='8' ry='10.5' fill='%23445566'/%3E%3Cellipse cx='121' cy='125' rx='8' ry='10.5' fill='%23445566'/%3E%3Cellipse cx='79' cy='126' rx='5.5' ry='8' fill='%23000000'/%3E%3Cellipse cx='121' cy='126' rx='5.5' ry='8' fill='%23000000'/%3E%3Cellipse cx='81.5' cy='121' rx='3.5' ry='4.5' fill='white'/%3E%3Cellipse cx='123.5' cy='121' rx='3.5' ry='4.5' fill='white'/%3E%3Ccircle cx='81' cy='129' r='1.5' fill='white' opacity='0.6'/%3E%3Ccircle cx='123' cy='129' r='1.5' fill='white' opacity='0.6'/%3E%3C!-- Mejillas --%3E%3Cellipse cx='58' cy='136' rx='9.5' ry='7.5' fill='%23ffc0e0' opacity='0.82'/%3E%3Cellipse cx='142' cy='136' rx='9.5' ry='7.5' fill='%23ffc0e0' opacity='0.82'/%3E%3Cellipse cx='58' cy='134' rx='6' ry='4' fill='%23ffd0e8' opacity='0.5'/%3E%3Cellipse cx='142' cy='134' rx='6' ry='4' fill='%23ffd0e8' opacity='0.5'/%3E%3C!-- Boca --%3E%3Cpath d='M 84 146 Q 100 154 116 146' stroke='%23000000' stroke-width='3.8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 86 147 Q 100 153 114 147' fill='%23dd1155'/%3E%3Cpath d='M 88 148 Q 100 152 112 148' fill='%23ff4477'/%3E%3Cellipse cx='100' cy='150' rx='8' ry='3' fill='%23ff6688' opacity='0.4'/%3E%3C/svg%3E" 
+           class="mascot-logo" 
+           alt="Zero Shake Mascot">
+      
+      <span data-icon="◈">10% OFF</span>
+      <span data-icon="⟡">BATIDO GRATIS</span>
+      <span data-icon="⬡">UPGRADE PROTEÍNA</span>
+      <span data-icon="◇">2X1</span>
+      <span data-icon="✕">SIGUE CUIDÁNDOTE</span>
+    </div>
+  </div>
+
+  <div class="result" id="resultado"></div>
+  <div class="small">1 código = 1 giro</div>
+</div>
+
+<script>
+  // Crear partículas flotantes
+  function createFloatingParticles() {
+    const container = document.getElementById('particles');
+    const particleCount = 15;
+    
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      
+      // Tamaño aleatorio
+      const size = Math.random() * 60 + 20;
+      particle.style.width = size + 'px';
+      particle.style.height = size + 'px';
+      
+      // Posición inicial aleatoria
+      particle.style.left = Math.random() * 100 + '%';
+      
+      // Duración aleatoria
+      const duration = Math.random() * 15 + 10;
+      particle.style.animationDuration = duration + 's';
+      
+      // Delay aleatorio
+      particle.style.animationDelay = Math.random() * 5 + 's';
+      
+      container.appendChild(particle);
+    }
+  }
+  
+  // Crear partículas al cargar
+  createFloatingParticles();
+
+  const WEBHOOK_URL = "https://felipardo.app.n8n.cloud/webhook/ruleta-validar";
+  const WHATSAPP_LINK = "https://wa.me/TUNUMERO"; // Cambia esto por tu link de WhatsApp
+  
+  const premiosMap = {
+    "10% OFF": 0,
+    "BATIDO GRATIS": 1,
+    "UPGRADE PROTEÍNA": 2,
+    "2X1": 3,
+    "SIGUE CUIDÁNDOTE": 4
+  };
+
+  const codigosUsados = {};
+
+  async function girar() {
+    const input = document.getElementById("codigo").value;
+    const codigo = input.toUpperCase().trim();
+    const wheel = document.getElementById("wheel");
+    const resultado = document.getElementById("resultado");
+    const boton = document.querySelector("button");
+    const card = document.querySelector(".card");
+
+    if (!codigo) {
+      resultado.innerText = "⚠️ Ingresa un código";
+      return;
+    }
+
+    if (codigosUsados[codigo]) {
+      resultado.innerText = "🚫 Este código ya fue usado en esta sesión";
+      return;
+    }
+
+    // Deshabilitar botón y mostrar loading
+    boton.disabled = true;
+    resultado.innerHTML = '<span class="loading">Verificando código<span class="loading-dots"></span></span>';
+
+    try {
+      // Enviar código al webhook
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ codigo: codigo })
+      });
+
+      const data = await response.json();
+
+      if (!data.ok) {
+        // Código inválido o ya utilizado
+        resultado.innerText = data.message || "❌ Código inválido o ya utilizado";
+        boton.disabled = false;
+        return;
+      }
+
+      // Código válido - obtener el premio desde n8n
+      const premioRecibido = data.premio;
+      const indicePremio = premiosMap[premioRecibido];
+
+      if (indicePremio === undefined) {
+        resultado.innerText = "⚠️ Error: Premio no reconocido";
+        boton.disabled = false;
+        return;
+      }
+
+      // Limpiar mensaje de verificación
+      resultado.innerText = "";
+
+      // Resetear la ruleta antes de girar (eliminar transición)
+      wheel.style.transition = 'none';
+      wheel.style.transform = 'rotate(0deg)';
+      
+      // Forzar reflow para aplicar el reset
+      void wheel.offsetWidth;
+      
+      // Restaurar transición
+      wheel.style.transition = 'transform 4s cubic-bezier(.17,.67,.26,1)';
+
+      // Calcular rotación para que caiga en el premio específico
+      const centrosSegmentos = [40, 106, 182, 254, 338];
+      const anguloDelPremio = centrosSegmentos[indicePremio];
+      let rotacionNecesaria = 180 - anguloDelPremio;
+      
+      const vueltas = 5 + Math.floor(Math.random() * 3);
+      const anguloFinal = vueltas * 360 + rotacionNecesaria;
+      
+      wheel.style.transform = `rotate(${anguloFinal}deg)`;
+      codigosUsados[codigo] = premioRecibido;
+
+      // Mostrar resultado después de la animación
+      setTimeout(() => {
+        if (premioRecibido === "SIGUE CUIDÁNDOTE") {
+          resultado.innerHTML = `<div class="try-again">✦ Sigue intentándolo</div>`;
+        } else {
+          // Crear confetti minimalista
+          const confettiContainer = document.createElement('div');
+          confettiContainer.className = 'confetti';
+          card.appendChild(confettiContainer);
+          
+          // Generar piezas de confetti
+          for (let i = 0; i < 15; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random() * 100 + '%';
+            piece.style.animationDelay = Math.random() * 0.3 + 's';
+            piece.style.background = i % 3 === 0 ? '#00d9ce' : i % 3 === 1 ? '#d4af37' : '#ffffff';
+            confettiContainer.appendChild(piece);
+          }
+          
+          resultado.innerHTML = `
+            <div class="prize-won">Premio desbloqueado: ${premioRecibido} ❖</div>
+            <button onclick="window.open('https://wa.me/56912345678', '_blank')" class="btn-claim">
+              RECLAMAR PREMIO
+            </button>
+          `;
+          
+          // Limpiar confetti después de la animación
+          setTimeout(() => {
+            confettiContainer.remove();
+          }, 1500);
+        }
+        boton.disabled = false;
+      }, 4200);
+
+    } catch (error) {
+      console.error("Error al validar código:", error);
+      resultado.innerText = "⚠️ Error de conexión. Intenta de nuevo";
+      boton.disabled = false;
+    }
+  }
+</script>
+
+</body>
+</html>
