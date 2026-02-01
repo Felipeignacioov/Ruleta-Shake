@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ruleta Zero Shake</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .floating-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .particle {
+    position: absolute;
+    background: radial-gradient(circle, rgba(0, 217, 206, 0.15), transparent);
+    border-radius: 50%;
+    animation: float linear infinite;
+  }
+  
+  @keyframes float {
+    0% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-100px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  .card {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 35px;
+    width: 98%;
+    max-width: 600px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: -80px;
+    transform: scale(1.2075);
+    z-index: 1;
+    animation: cardEntrance 0.8s ease-out;
+  }
+  
+  @keyframes cardEntrance {
+    0% {
+      opacity: 0;
+      transform: scale(1.2075) translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1.2075) translateY(0);
+    }
+  }
+
+  h1 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    background: linear-gradient(135deg, #00d9ce, #00a89e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  p {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    margin-top: 20px;
+    font-size: 14px;
+    outline: none;
+    color: #fff;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  input::placeholder {
+    color: rgba(255,255,255,0.4);
+  }
+
+  button {
+    margin-top: 18px;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    background: #ffffff;
+    color: #0a0a0a;
+    cursor: pointer;
+    transition: all .2s ease;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255,255,255,.2);
+  }
+  
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .wheel-container {
+    position: relative;
+    margin: 25px auto;
+    width: 448.8px;
+    height: 448.8px;
+  }
+
+  .wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 8px solid #00d9ce;
+    box-shadow: 
+      0 0 27px rgba(0,217,206,0.54),
+      0 0 54px rgba(0,217,206,0.36),
+      0 0 81px rgba(0,217,206,0.27),
+      0 8px 32px rgba(0,217,206,0.27),
+      inset 0 0 40px rgba(0,0,0,0.1);
+    position: relative;
+    transition: transform 4s cubic-bezier(.17,.67,.26,1);
+    background: conic-gradient(
+      from 0deg,
+      #0a0a0a 0deg 72deg,
+      #1a1a1a 72deg 144deg,
+      #2d2d2d 144deg 216deg,
+      #1f1f1f 216deg 288deg,
+      #252525 288deg 360deg
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .wheel::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: 
+      conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 72deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 144deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 216deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg),
+      conic-gradient(from 288deg, transparent 0deg, rgba(255,255,255,0.15) 0deg, rgba(255,255,255,0.15) 0.8deg, transparent 0.8deg);
+    pointer-events: none;
+  }
+  
+  .wheel::after {
+    content: '';
+    position: absolute;
+    width: 97.2px;
+    height: 97.2px;
+    background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(240,248,255,0.95) 100%);
+    border-radius: 50%;
+    border: 3px solid #00d9ce;
+    box-shadow: 
+      0 0 18px rgba(0,217,206,0.45),
+      inset 0 0 20px rgba(0,217,206,0.1),
+      inset 0 2px 8px rgba(0,0,0,0.08),
+      inset 0 -2px 6px rgba(255,255,255,0.4);
+    z-index: 5;
+  }
+  
+  .mascot-logo {
+    position: absolute;
+    width: 78.75px;
+    height: 78.75px;
+    z-index: 6;
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.12)) drop-shadow(0 1px 3px rgba(0,0,0,0.08));
+    animation: mascotBreath 3s ease-in-out infinite;
+  }
+  
+  @keyframes mascotBreath {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  .wheel span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: 0% 0%;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14.5475px;
+    pointer-events: none;
+    line-height: 1.3;
+    width: 85px;
+    margin-top: -8px;
+    margin-left: -5px;
+    color: #ffffff;
+    text-shadow: 
+      0 2px 8px rgba(0,0,0,0.5);
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    opacity: 0.95;
+  }
+  
+  .wheel span::before {
+    content: attr(data-icon);
+    display: block;
+    font-size: 22.264px;
+    margin-bottom: 2px;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+  }
+
+  .wheel span:nth-child(2) { 
+    transform: rotate(36deg) translateX(110px) rotate(-90deg);
+  }
+  .wheel span:nth-child(3) { 
+    transform: rotate(105deg) translateX(88px) rotate(-90deg);
+  }
+  .wheel span:nth-child(4) { 
+    transform: rotate(180deg) translateX(88px) rotate(-90deg);
+  }
+  .wheel span:nth-child(5) { 
+    transform: rotate(252deg) translateX(60px) rotate(-90deg);
+  }
+  .wheel span:nth-child(6) { 
+    transform: rotate(330deg) translateX(90px) rotate(-90deg);
+  }
+
+  .needle {
+    position: absolute;
+    top: 50%;
+    left: -25px;
+    transform: translateY(-50%) rotate(-90deg);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 50px solid #00d9ce;
+    z-index: 10;
+    filter: drop-shadow(0 0 13.5px rgba(0,217,206,0.72));
+  }
+
+  .result {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    min-height: 24px;
+  }
+  
+  .prize-won {
+    animation: fadeInScale 0.6s ease-out;
+    margin-bottom: 8px;
+  }
+  
+  .try-again {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  @keyframes fadeInScale {
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .confetti {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  
+  .confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #00d9ce;
+    opacity: 0;
+    animation: confettiFall 1.2s ease-out forwards;
+  }
+  
+  @keyframes confettiFall {
+    0% {
+      opacity: 1;
+      transform: translateY(0) rotate(0deg);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(150px) rotate(360deg);
+    }
+  }
+  
+  .loading {
+    display: inline-block;
+  }
+  
+  .loading-dots::after {
+    content: '';
+    animation: dots 1.5s steps(4, end) infinite;
+  }
+  
+  @keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+  }
+
+  .small {
+    margin-top: 10px;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="floating-particles" id="particles"></div>
+
+<div class="card">
+  <h1>🎰 Ruleta Zero Shake</h1>
+  <p>Ingresa tu código y gira la ruleta</p>
+
+  <input id="codigo" placeholder="Ej: ZS-DEMO-01">
+  <button onclick="girar()">Girar ruleta</button>
+
+  <div class="wheel-container">
+    <div class="needle"></div>
+    <div class="wheel" id="wheel">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='13 35 174 204'%3E%3Cdefs%3E%3CradialGradient id='dropMain' cx='35%25' cy='30%25'%3E%3Cstop offset='0%25' stop-color='%23f0fcff'/%3E%3Cstop offset='30%25' stop-color='%23b8ecff'/%3E%3Cstop offset='60%25' stop-color='%2370d8ff'/%3E%3Cstop offset='100%25' stop-color='%2340c0f0'/%3E%3C/radialGradient%3E%3CradialGradient id='shirtGradient' cx='30%25' cy='25%25'%3E%3Cstop offset='0%25' stop-color='%23a8f0ff'/%3E%3Cstop offset='50%25' stop-color='%2380dcff'/%3E%3Cstop offset='100%25' stop-color='%2360d5f0'/%3E%3C/radialGradient%3E%3CradialGradient id='pantsGradient' cx='30%25' cy='20%25'%3E%3Cstop offset='0%25' stop-color='%23008899'/%3E%3Cstop offset='60%25' stop-color='%23006677'/%3E%3Cstop offset='100%25' stop-color='%23004455'/%3E%3C/radialGradient%3E%3CradialGradient id='hatGreen' cx='35%25' cy='30%25'%3E%3Cstop offset='0%25' stop-color='%23d0ff90'/%3E%3Cstop offset='50%25' stop-color='%23b8ff70'/%3E%3Cstop offset='100%25' stop-color='%2390e850'/%3E%3C/radialGradient%3E%3CradialGradient id='cheekGrad'%3E%3Cstop offset='0%25' stop-color='%23ffb8d8' opacity='0.8'/%3E%3Cstop offset='70%25' stop-color='%23ffb8d8' opacity='0.5'/%3E%3Cstop offset='100%25' stop-color='%23ffb8d8' opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='shineGrad1'%3E%3Cstop offset='0%25' stop-color='%23EAFBFF' opacity='0.4'/%3E%3Cstop offset='40%25' stop-color='%23DFF6FF' opacity='0.25'/%3E%3Cstop offset='70%25' stop-color='%23DFF6FF' opacity='0.08'/%3E%3Cstop offset='100%25' stop-color='%23DFF6FF' opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='shineGrad2'%3E%3Cstop offset='0%25' stop-color='%23EAFBFF' opacity='0.35'/%3E%3Cstop offset='50%25' stop-color='%23DFF6FF' opacity='0.18'/%3E%3Cstop offset='80%25' stop-color='%23DFF6FF' opacity='0.04'/%3E%3Cstop offset='100%25' stop-color='%23DFF6FF' opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='shineGrad3'%3E%3Cstop offset='0%25' stop-color='%23EAFBFF' opacity='0.3'/%3E%3Cstop offset='60%25' stop-color='%23DFF6FF' opacity='0.12'/%3E%3Cstop offset='100%25' stop-color='%23DFF6FF' opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='shineHeadSubtle'%3E%3Cstop offset='0%25' stop-color='%23EAFBFF' opacity='0.25'/%3E%3Cstop offset='40%25' stop-color='%23DFF6FF' opacity='0.12'/%3E%3Cstop offset='70%25' stop-color='%23DFF6FF' opacity='0.04'/%3E%3Cstop offset='100%25' stop-color='%23DFF6FF' opacity='0'/%3E%3C/radialGradient%3E%3Cfilter id='shadowBlur'%3E%3CfeGaussianBlur in='SourceGraphic' stdDeviation='3'/%3E%3C/filter%3E%3Cfilter id='softGlow'%3E%3CfeGaussianBlur in='SourceGraphic' stdDeviation='4'/%3E%3C/filter%3E%3Cfilter id='subtleGlow'%3E%3CfeGaussianBlur in='SourceGraphic' stdDeviation='12'/%3E%3C/filter%3E%3C/defs%3E%3Cellipse cx='100' cy='241' rx='42' ry='9' fill='%23000000' opacity='0.15' filter='url(%23shadowBlur)'/%3E%3Cellipse cx='88' cy='233' rx='23.8' ry='13.8' fill='%23f0f0f0'/%3E%3Cellipse cx='112' cy='233' rx='23.8' ry='13.8' fill='%23f0f0f0'/%3E%3Cellipse cx='95' cy='238' rx='7.9' ry='5.5' fill='%23000000' opacity='0.15'/%3E%3Cellipse cx='118' cy='238' rx='7.9' ry='5.5' fill='%23000000' opacity='0.15'/%3E%3Cpath d='M 66 233 Q 73 227 88 227 L 97 242 Q 88 241 73 241 Z' fill='%2360d5ff'/%3E%3Cpath d='M 134 233 Q 127 227 112 227 L 103 242 Q 112 241 127 241 Z' fill='%2360d5ff'/%3E%3Cpath d='M 73 230 L 88 230' stroke='%23ddd' stroke-width='2.8'/%3E%3Cpath d='M 127 230 L 112 230' stroke='%23ddd' stroke-width='2.8'/%3E%3Cellipse cx='83' cy='229' rx='5.3' ry='4.2' fill='%2380ddff' opacity='0.6'/%3E%3Cellipse cx='117' cy='229' rx='5.3' ry='4.2' fill='%2380ddff' opacity='0.6'/%3E%3Cellipse cx='81' cy='229' rx='13.2' ry='8.4' fill='url(%23shineGrad2)' filter='url(%23softGlow)'/%3E%3Cellipse cx='119' cy='229' rx='13.2' ry='8.4' fill='url(%23shineGrad2)' filter='url(%23softGlow)'/%3E%3Cpath d='M 81 210 L 80 226 Q 80 230 85 230 L 96 230 Q 101 230 101 226 L 100 210 Z' fill='url(%23pantsGradient)'/%3E%3Cpath d='M 103 210 L 102 226 Q 102 230 107 230 L 118 230 Q 123 230 123 226 L 121 210 Z' fill='url(%23pantsGradient)'/%3E%3Cellipse cx='82' cy='214' rx='5' ry='6' fill='%23ffffff' opacity='0.2'/%3E%3Cellipse cx='107' cy='214' rx='5' ry='6' fill='%23ffffff' opacity='0.2'/%3E%3Cellipse cx='95' cy='221' rx='4' ry='12' fill='%23000000' opacity='0.05'/%3E%3Cellipse cx='107' cy='221' rx='4' ry='12' fill='%23000000' opacity='0.05'/%3E%3Cellipse cx='121' cy='224' rx='5' ry='8' fill='%23000000' opacity='0.12'/%3E%3Cellipse cx='123' cy='228' rx='4' ry='6' fill='%23000000' opacity='0.1'/%3E%3Cpath d='M 100 75 Q 64 79 57 99 Q 52 119 57 139 Q 62 156 68 169 Q 70 175 71 182 L 71 197 Q 71 205 78 210 L 122 210 Q 129 205 129 197 L 129 182 Q 130 175 132 169 Q 138 156 143 139 Q 148 119 143 99 Q 136 79 100 75 Z' fill='url(%23dropMain)'/%3E%3Cellipse cx='60' cy='143' rx='5' ry='28' fill='%23000000' opacity='0.05'/%3E%3Cellipse cx='140' cy='143' rx='5' ry='28' fill='%23000000' opacity='0.05'/%3E%3Cellipse cx='125' cy='161' rx='8' ry='20' fill='%23000000' opacity='0.1'/%3E%3Cellipse cx='130' cy='179' rx='6' ry='14' fill='%23000000' opacity='0.08'/%3E%3Cellipse cx='73' cy='101' rx='20' ry='32' fill='url(%23shineGrad2)' filter='url(%23softGlow)'/%3E%3Cpath d='M 68 169 Q 63 177 63 189 L 63 200 Q 63 206 70 210 L 130 210 Q 137 206 137 200 L 137 189 Q 137 177 132 169 Z' fill='url(%23shirtGradient)' opacity='0.9'/%3E%3Cpath d='M 100 187 Q 96 184 96 179 Q 96 174 100 172 Q 104 174 104 179 Q 104 184 100 187 M 100 172 L 100 187' fill='%23b8ff70' stroke='%2390e850' stroke-width='0.8' opacity='0.95'/%3E%3Cpath d='M 60 167 Q 46 169 36 180 L 34 190 Q 34 195 39 198 L 57 198 Q 70 198 73 193 L 75 180 Q 75 169 68 167 Q 64 165 60 167 Z' fill='url(%23dropMain)'/%3E%3Cpath d='M 140 167 Q 154 169 164 180 L 166 190 Q 166 195 161 198 L 143 198 Q 130 198 127 193 L 125 180 Q 125 169 132 167 Q 136 165 140 167 Z' fill='url(%23dropMain)'/%3E%3Cellipse cx='58' cy='173' rx='11' ry='11' fill='url(%23shineGrad1)' filter='url(%23softGlow)'/%3E%3Cellipse cx='142' cy='173' rx='11' ry='11' fill='url(%23shineGrad1)' filter='url(%23softGlow)'/%3E%3Cellipse cx='47' cy='189' rx='8' ry='9' fill='%23000000' opacity='0.05'/%3E%3Cellipse cx='153' cy='189' rx='8' ry='9' fill='%23000000' opacity='0.05'/%3E%3Cellipse cx='164' cy='192' rx='9' ry='11' fill='%23000000' opacity='0.12'/%3E%3Cellipse cx='166' cy='200' rx='8' ry='9' fill='%23000000' opacity='0.1'/%3E%3Cellipse cx='59' cy='198' rx='11' ry='3' fill='%23000000' opacity='0.2'/%3E%3Cellipse cx='141' cy='198' rx='11' ry='3' fill='%23000000' opacity='0.2'/%3E%3Cellipse cx='49' cy='199' rx='11' ry='6' fill='%23f8f8f8' opacity='0.95'/%3E%3Cellipse cx='151' cy='199' rx='11' ry='6' fill='%23f8f8f8' opacity='0.95'/%3E%3Cellipse cx='61' cy='166' rx='4.5' ry='7' fill='%23ffffff' opacity='0'/%3E%3Cellipse cx='139' cy='166' rx='4.5' ry='7' fill='%23ffffff' opacity='0'/%3E%3Ccircle cx='63' cy='162' r='2' fill='%23ffffff' opacity='0'/%3E%3Ccircle cx='137' cy='162' r='2' fill='%23ffffff' opacity='0'/%3E%3Cellipse cx='43' cy='206' rx='11' ry='12' fill='%23f8f8f8'/%3E%3Cellipse cx='157' cy='206' rx='11' ry='12' fill='%23f8f8f8'/%3E%3Cellipse cx='41' cy='203' rx='9' ry='10' fill='url(%23shineGrad1)' filter='url(%23softGlow)'/%3E%3Cellipse cx='159' cy='203' rx='9' ry='10' fill='url(%23shineGrad1)' filter='url(%23softGlow)'/%3E%3Cpath d='M 100 90 Q 50 102 46 125 Q 44 140 50 151 Q 56 161 70 168 Q 90 173 100 174 Q 110 173 130 168 Q 144 161 150 151 Q 156 140 154 125 Q 150 102 100 90 Z' fill='url(%23dropMain)'/%3E%3Cellipse cx='100' cy='172' rx='30' ry='5.5' fill='%23000000' opacity='0.08'/%3E%3Cellipse cx='100' cy='170' rx='26' ry='3.5' fill='%23000000' opacity='0.06'/%3E%3Cellipse cx='124' cy='157' rx='15' ry='18' fill='%23000000' opacity='0.12'/%3E%3Cellipse cx='130' cy='148' rx='11' ry='15' fill='%23000000' opacity='0.08'/%3E%3Cellipse cx='76' cy='104' rx='26' ry='32' fill='url(%23shineHeadSubtle)' filter='url(%23subtleGlow)'/%3E%3Cpath d='M 100 55 Q 98 60 97 66 Q 96 72 97 79 Q 98 83 100 88 L 100 88 Q 102 83 103 79 Q 104 72 103 66 Q 102 60 100 55 Z' fill='%2360d5ff'/%3E%3Cellipse cx='100' cy='73' rx='4' ry='14' fill='%2398e5ff' opacity='0.5'/%3E%3Ccircle cx='100' cy='60' r='2' fill='%23e0f7ff' opacity='0.8'/%3E%3Cellipse cx='100' cy='88' rx='34' ry='6' fill='url(%23hatGreen)'/%3E%3Cellipse cx='100' cy='87' rx='32' ry='4' fill='%23d0ff90' opacity='0.5'/%3E%3Cellipse cx='100' cy='95' rx='33' ry='6' fill='%23f8f8f8'/%3E%3Cellipse cx='100' cy='94' rx='31' ry='4' fill='%23f0f0f0'/%3E%3Cellipse cx='55' cy='139' rx='12' ry='20' fill='%23000000' opacity='0.06'/%3E%3Cellipse cx='145' cy='139' rx='12' ry='20' fill='%23000000' opacity='0.06'/%3E%3Cellipse cx='100' cy='133' rx='8' ry='3' fill='%23000000' opacity='0.04'/%3E%3Cpath d='M 74 115 Q 78 113 81 115' stroke='%23003344' stroke-width='2.8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 126 115 Q 122 113 119 115' stroke='%23003344' stroke-width='2.8' fill='none' stroke-linecap='round'/%3E%3Cellipse cx='79' cy='123' rx='15.16' ry='18.18' fill='%23ffffff'/%3E%3Cellipse cx='121' cy='123' rx='15.16' ry='18.18' fill='%23ffffff'/%3E%3Cellipse cx='79' cy='120' rx='13.5' ry='4.55' fill='%23e0f0ff' opacity='0.5'/%3E%3Cellipse cx='121' cy='120' rx='13.5' ry='4.55' fill='%23e0f0ff' opacity='0.5'/%3E%3Cellipse cx='79' cy='125' rx='11.3' ry='14.4' fill='%23334455'/%3E%3Cellipse cx='121' cy='125' rx='11.3' ry='14.4' fill='%23334455'/%3E%3Cellipse cx='79' cy='126' rx='9.1' ry='12.3' fill='%23000000'/%3E%3Cellipse cx='121' cy='126' rx='9.1' ry='12.3' fill='%23000000'/%3E%3Cellipse cx='82' cy='119' rx='7.5' ry='9.5' fill='%23EAFBFF' opacity='0.4'/%3E%3Cellipse cx='124' cy='119' rx='7.5' ry='9.5' fill='%23EAFBFF' opacity='0.4'/%3E%3Cellipse cx='76' cy='130' rx='3.5' ry='4' fill='%23DFF6FF' opacity='0.35'/%3E%3Cellipse cx='118' cy='130' rx='3.5' ry='4' fill='%23DFF6FF' opacity='0.35'/%3E%3Ccircle cx='83.5' cy='120.5' r='1.2' fill='%23ffffff' opacity='0.4'/%3E%3Ccircle cx='125.5' cy='120.5' r='1.2' fill='%23ffffff' opacity='0.4'/%3E%3Cellipse cx='59' cy='132' rx='9' ry='7' fill='url(%23cheekGrad)'/%3E%3Cellipse cx='141' cy='132' rx='9' ry='7' fill='url(%23cheekGrad)'/%3E%3Cellipse cx='57' cy='130' rx='3' ry='2' fill='%23EAFBFF' opacity='0.5'/%3E%3Cellipse cx='143' cy='130' rx='3' ry='2' fill='%23EAFBFF' opacity='0.5'/%3E%3Cpath d='M 84 132 Q 100 151 116 132' stroke='%23003344' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 86 133 Q 100 149 114 133' fill='%23dd3355'/%3E%3Cellipse cx='100' cy='139' rx='13' ry='6.5' fill='%23aa2244' opacity='0.8'/%3E%3Cellipse cx='100' cy='134' rx='10' ry='2.5' fill='%23EAFBFF' opacity='0.5'/%3E%3Cellipse cx='92' cy='140' rx='2.5' ry='3' fill='%23DFF6FF' opacity='0.4'/%3E%3Cellipse cx='108' cy='140' rx='2.5' ry='3' fill='%23DFF6FF' opacity='0.4'/%3E%3C/svg%3E" 
+           class="mascot-logo" 
+           alt="Zero Shake Mascot">
+      
+      <span data-icon="◈">10% OFF</span>
+      <span data-icon="⟡">BATIDO GRATIS</span>
+      <span data-icon="⬡">UPGRADE PROTEÍNA</span>
+      <span data-icon="◇">2X1</span>
+      <span data-icon="✕">SIGUE CUIDÁNDOTE</span>
+    </div>
+  </div>
+
+  <div class="result" id="resultado"></div>
+  <div class="small">1 código = 1 giro</div>
+</div>
+
+<script>
+  function createFloatingParticles() {
+    const container = document.getElementById('particles');
+    const particleCount = 15;
+    
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      
+      const size = Math.random() * 60 + 20;
+      particle.style.width = size + 'px';
+      particle.style.height = size + 'px';
+      
+      particle.style.left = Math.random() * 100 + '%';
+      
+      const duration = Math.random() * 15 + 10;
+      particle.style.animationDuration = duration + 's';
+      
+      particle.style.animationDelay = Math.random() * 5 + 's';
+      
+      container.appendChild(particle);
+    }
+  }
+  
+  createFloatingParticles();
+
+  const WEBHOOK_URL = "https://felipardo.app.n8n.cloud/webhook/ruleta-validar";
+  
+  const premiosMap = {
+    "10% OFF": 0,
+    "BATIDO GRATIS": 1,
+    "UPGRADE PROTEÍNA": 2,
+    "2X1": 3,
+    "SIGUE CUIDÁNDOTE": 4
+  };
+
+  const codigosUsados = {};
+
+  async function girar() {
+    const input = document.getElementById("codigo").value;
+    const codigo = input.toUpperCase().trim();
+    const wheel = document.getElementById("wheel");
+    const resultado = document.getElementById("resultado");
+    const boton = document.querySelector("button");
+    const card = document.querySelector(".card");
+
+    if (!codigo) {
+      resultado.innerText = "⚠️ Ingresa un código";
+      return;
+    }
+
+    if (codigosUsados[codigo]) {
+      resultado.innerText = "🚫 Este código ya fue usado en esta sesión";
+      return;
+    }
+
+    boton.disabled = true;
+    resultado.innerHTML = '<span class="loading">Verificando código<span class="loading-dots"></span></span>';
+
+    try {
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ codigo: codigo })
+      });
+
+      const data = await response.json();
+
+      if (!data.ok) {
+        resultado.innerText = data.message || "❌ Código inválido o ya utilizado";
+        boton.disabled = false;
+        return;
+      }
+
+      const premioRecibido = data.premio;
+      const indicePremio = premiosMap[premioRecibido];
+
+      if (indicePremio === undefined) {
+        resultado.innerText = "⚠️ Error: Premio no reconocido";
+        boton.disabled = false;
+        return;
+      }
+
+      resultado.innerText = "";
+
+      wheel.style.transition = 'none';
+      wheel.style.transform = 'rotate(0deg)';
+      
+      void wheel.offsetWidth;
+      
+      wheel.style.transition = 'transform 4s cubic-bezier(.17,.67,.26,1)';
+
+      const centrosSegmentos = [40, 106, 182, 254, 338];
+      const anguloDelPremio = centrosSegmentos[indicePremio];
+      let rotacionNecesaria = 180 - anguloDelPremio;
+      
+      const vueltas = 5 + Math.floor(Math.random() * 3);
+      const anguloFinal = vueltas * 360 + rotacionNecesaria;
+      
+      wheel.style.transform = `rotate(${anguloFinal}deg)`;
+      codigosUsados[codigo] = premioRecibido;
+
+      setTimeout(() => {
+        if (premioRecibido === "SIGUE CUIDÁNDOTE") {
+          resultado.innerHTML = `<div class="try-again">✦ Sigue intentándolo</div>`;
+        } else {
+          const confettiContainer = document.createElement('div');
+          confettiContainer.className = 'confetti';
+          card.appendChild(confettiContainer);
+          
+          for (let i = 0; i < 15; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random() * 100 + '%';
+            piece.style.animationDelay = Math.random() * 0.3 + 's';
+            piece.style.background = i % 3 === 0 ? '#00d9ce' : i % 3 === 1 ? '#d4af37' : '#ffffff';
+            confettiContainer.appendChild(piece);
+          }
+          
+          resultado.innerHTML = `
+            <div class="prize-won">Premio desbloqueado: ${premioRecibido} ❖</div>
+            <button onclick="window.open('https://wa.me/56912345678', '_blank')" class="btn-claim">
+              RECLAMAR PREMIO
+            </button>
+          `;
+          
+          setTimeout(() => {
+            confettiContainer.remove();
+          }, 1500);
+        }
+        boton.disabled = false;
+      }, 4200);
+
+    } catch (error) {
+      console.error("Error al validar código:", error);
+      resultado.innerText = "⚠️ Error de conexión. Intenta de nuevo";
+      boton.disabled = false;
+    }
+  }
+</script>
+
+</body>
+</html>
